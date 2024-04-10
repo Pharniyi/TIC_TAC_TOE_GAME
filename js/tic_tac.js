@@ -2,6 +2,7 @@ let userText = document.getElementById('userText')
 let rstartBtn = document.getElementById('rstartBtn')
 let boxes = Array.from(document.getElementsByClassName('box'))
 
+let winnerIndicator = getComputedStyle(document.body).getPropertyValue('--winningblocks')
 console.log(boxes)
 
 const O_TEXT='0'
@@ -22,11 +23,17 @@ function boxClicked (e) {
         spaces[id]= currentPlayer
         e.target.innerText = currentPlayer
 
+     if(playerHasWon() !==false){
+            playerText= `${currentPlayer} has won!`
+            let winningblocks=playerHasWon()
+
+            winningblocks.map(box => boxes[box].style.backgroundColor=winnerIndicator)
+            return 
+        }
+
         currentPlayer= currentPlayer== X_TEXT ? O_TEXT:X_TEXT
 
-        if(playerHasWon()){
-            playerText= `${currentPlayer} has won`
-        }
+   
     }
 }
 
@@ -45,7 +52,12 @@ const winningcombo = [
 function playerHasWon(){
     for (const condition of winningcombo) {
         let [a,b,c] = condition
+
+        if(spaces[a] && (spaces[a] == spaces[b] && spaces[a] == spaces[c])){
+            return[a,b,c]
+        }
     }
+    return false
 }
 rstartBtn.addEventListener('click' , restart)
 
@@ -53,10 +65,13 @@ function restart(){
     spaces.fill(null)
     boxes.forEach(box=>{
         box.innerText=''
+        box.style.backgroundColor=''
     })
 
+
     playerText='Tic Tac Toe'
-   currentPlayer=X_TEXT 
+    
+    currentPlayer=X_TEXT 
 
 }
 
